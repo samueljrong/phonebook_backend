@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express()
 
+app.use(express.json())
+
 let persons = [
   {
     "name": "Arto Hellas",
@@ -58,6 +60,37 @@ app.delete('/api/persons/:id', (request, response) => {
   persons = persons.filter(person => person.id !== id)
 
   response.status(204).end()
+})
+
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+}
+
+app.post('/api/persons', (request, response) => {
+  const body = request.body
+
+  if (!body.name) {
+    return response.status(400).json({
+      error: 'Name missing'
+    })
+  }
+  if (!body.number) {
+    return response.status(400).json({
+      error: 'Number missing'
+    })
+  }
+
+  const person = {
+    name: body.name,
+    number: body.number,
+    id: getRandomInt(5, 10000)
+  }
+
+  persons = persons.concat(person)
+
+  response.json(person)
 })
 
 const PORT = 3001
