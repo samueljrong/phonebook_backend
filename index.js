@@ -1,12 +1,22 @@
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
+const cors = require('cors')
 
 app.use(express.json())
+// "whenever express gets an HTTP GET request it will first check if the build 
+// directory contains a file corresponding to the request's address. 
+// If a correct file is found, express will return it."
+app.use(express.static('build'))
 
 // Shows POST request data in logs
 morgan.token('data', (request, response) => JSON.stringify(request.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :data'))
+
+// "allow requests from other origins"
+// "Because our server is in localhost port 3001,
+// and our frontend in localhost port 3000, they do not have the same origin."
+app.use(cors())
 
 let persons = [
   {
@@ -103,7 +113,7 @@ app.post('/api/persons', (request, response) => {
   response.json(person)
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
