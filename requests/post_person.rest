@@ -5,3 +5,12 @@ Content-Type: application/json
   "name": "First Last-Name",
   "number": "123-456-7890"
 }
+
+###
+POST https://mysterious-mesa-75316.herokuapp.com/api/persons
+Content-Type: application/json
+
+{
+  "name": "First Last-Name",
+  "number": "123-456-7890"
+}
