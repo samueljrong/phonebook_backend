@@ -1,4 +1,4 @@
-POST http://localhost:3001/api/persons
+POST http://localhost:3001/api/people
 Content-Type: application/json
 
 {
@@ -7,7 +7,7 @@ Content-Type: application/json
 }
 
 ###
-POST https://mysterious-mesa-75316.herokuapp.com/api/persons
+POST https://mysterious-mesa-75316.herokuapp.com/api/people
 Content-Type: application/json
 
 {

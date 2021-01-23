@@ -1,11 +1,13 @@
+require('dotenv').config() // import dotenv before person module so env variables globally available
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
+const Person = require('./models/person')
 
 app.use(express.json())
-// "whenever express gets an HTTP GET request it will first check if the build 
-// directory contains a file corresponding to the request's address. 
+// "whenever express gets an HTTP GET request it will first check if the build
+// directory contains a file corresponding to the request's address.
 // If a correct file is found, express will return it."
 app.use(express.static('build'))
 
@@ -18,28 +20,28 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :d
 // and our frontend in localhost port 3000, they do not have the same origin."
 app.use(cors())
 
-let persons = [
-  {
-    "name": "Arto Hellas",
-    "number": "040-123456",
-    "id": 1
-  },
-  {
-    "name": "Ada Lovelace",
-    "number": "39-44-5323523",
-    "id": 2
-  },
-  {
-    "name": "Dan Abramov",
-    "number": "12-43-234345",
-    "id": 3
-  },
-  {
-    "name": "Mary Poppendieck",
-    "number": "39-23-6423122",
-    "id": 4
-  }
-]
+// let people = [
+//   {
+//     "name": "Arto Hellas",
+//     "number": "040-123456",
+//     "id": 1
+//   },
+//   {
+//     "name": "Ada Lovelace",
+//     "number": "39-44-5323523",
+//     "id": 2
+//   },
+//   {
+//     "name": "Dan Abramov",
+//     "number": "12-43-234345",
+//     "id": 3
+//   },
+//   {
+//     "name": "Mary Poppendieck",
+//     "number": "39-23-6423122",
+//     "id": 4
+//   }
+// ]
 
 app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
@@ -48,31 +50,28 @@ app.get('/', (request, response) => {
 app.get('/info', (request, response) => {
   response.send(
     `
-    <p>Phonebook has info for ${persons.length} people</p>
+    <p>Phonebook has info for ${people.length} people</p>
     <p>${new Date()}</p>
     `
   )
 
 })
 
-app.get('/api/persons', (request, response) => {
-  response.json(persons)
+app.get('/api/people', (request, response) => {
+  Person.find({}).then(people => {
+    response.json(people)
+  })
 })
 
-app.get('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const person = persons.find(person => person.id === id)
-
-  if (person) {
+app.get('/api/people/:id', (request, response) => {
+  Person.findById(request.params.id).then(person => {
     response.json(person)
-  } else {
-    response.status(404).end()
-  }
+  })
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/people/:id', (request, response) => {
   const id = Number(request.params.id)
-  persons = persons.filter(person => person.id !== id)
+  people = people.filter(person => person.id !== id)
 
   response.status(204).end()
 })
@@ -83,7 +82,7 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
 }
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/people', (request, response) => {
   const body = request.body
 
   if (!body.name) {
@@ -96,7 +95,7 @@ app.post('/api/persons', (request, response) => {
       error: 'Number missing'
     })
   }
-  if (persons.find(person => person.name === body.name)) {
+  if (people.find(person => person.name === body.name)) {
     return response.status(409).json({
       error: 'Name must be unique'
     })
@@ -108,12 +107,12 @@ app.post('/api/persons', (request, response) => {
     id: getRandomInt(5, 10000)
   }
 
-  persons = persons.concat(person)
-
-  response.json(person)
+  person.save().then(savedPerson => {
+    response.json(person)
+  })
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
