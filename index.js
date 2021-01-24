@@ -59,13 +59,13 @@ app.get('/info', (request, response) => {
 
 app.get('/api/people', (request, response) => {
   Person.find({}).then(people => {
-    response.json(people)
+    response.json(people.map(person => person.toJSON()))
   })
 })
 
 app.get('/api/people/:id', (request, response) => {
   Person.findById(request.params.id).then(person => {
-    response.json(person)
+    response.json(person.toJSON())
   })
 })
 
@@ -95,13 +95,13 @@ app.post('/api/people', (request, response) => {
   //   })
   // }
 
-  const person = {
+  const person = new Person({
     name: body.name,
     number: body.number
-  }
+  })
 
   person.save().then(savedPerson => {
-    response.json(savedPerson)
+    response.json(savedPerson.toJSON())
   })
 })
 
