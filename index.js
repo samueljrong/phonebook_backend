@@ -26,14 +26,17 @@ app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
 })
 
-app.get('/info', (request, response) => {
-  response.send(
-    `
-    <p>Phonebook has info for ${people.length} people</p>
-    <p>${new Date()}</p>
-    `
-  )
-
+app.get('/info', (request, response, next) => {
+  Person.count({})
+    .then(numDocs => {
+      response.send(
+        `
+        <p>Phonebook has info for ${numDocs} people</p>
+        <p>${new Date()}</p>
+        `
+      )
+    })
+    .catch(error => next(error))
 })
 
 app.get('/api/people', (request, response) => {

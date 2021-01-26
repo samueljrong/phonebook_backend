@@ -1,4 +1,4 @@
-GET http://localhost:3001/api/people/6009d66db8c5ad1b458d19e4
+GET http://localhost:3001/api/people/6009d683b906ab1b5aa3a64e
 
 ###
 GET https://mysterious-mesa-75316.herokuapp.com/api/people/1
