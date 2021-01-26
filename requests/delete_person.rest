@@ -1,4 +1,4 @@
-DELETE http://localhost:3001/api/people/1
+DELETE http://localhost:3001/api/people/600fa111caf30a1652898852
 
 ###
 DELETE https://mysterious-mesa-75316.herokuapp.com/api/people/1

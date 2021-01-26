@@ -16,7 +16,10 @@ const personSchema = new mongoose.Schema({
   number: String
 })
 
-personSchema.set('toJson', {
+//  Cast to ObjectId failed for value "undefined" at path "_id" for model "Person"
+// That error was because the schema's toJSON wasn't being set correctly
+// Error caused by using parameter 'toJson' instead of 'toJSON' with all caps JSON
+personSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString() // _id is an Object
     delete returnedObject._id
