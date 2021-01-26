@@ -79,12 +79,12 @@ app.delete('/api/people/:id', (request, response) => {
 app.post('/api/people', (request, response) => {
   const body = request.body
 
-  if (!body.name) {
+  if (body.name === undefined) {
     return response.status(400).json({
       error: 'Name missing'
     })
   }
-  if (!body.number) {
+  if (body.number === undefined) {
     return response.status(400).json({
       error: 'Number missing'
     })
