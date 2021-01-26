@@ -98,6 +98,28 @@ const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
 
+app.put('/api/people/:id', (request, response, next) => {
+  const body = request.body
+
+  const person = {
+    name: body.name,
+    number: body.number
+  }
+
+  // "Notice that the findByIdAndUpdate method receives a regular JavaScript object as its parameter,
+  // and not a new person object created with the Person constructor function."
+
+  // "the optional { new: true } parameter, which will cause our event handler
+  //  to be called with the new modified document instead of the original"
+
+  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then(updatedPerson => {
+      response.json(updatedPerson.toJSON())
+    })
+    .catch(error => next(error))
+})
+
+
 // handler of requests with unknown endpoint
 app.use(unknownEndpoint)
 
