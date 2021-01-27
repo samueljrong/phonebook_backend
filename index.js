@@ -118,7 +118,7 @@ app.put('/api/people/:id', (request, response, next) => {
   // "the optional { new: true } parameter, which will cause our event handler
   //  to be called with the new modified document instead of the original"
 
-  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+  Person.findByIdAndUpdate(request.params.id, person, { new: true, runValidators: true })
     .then(updatedPerson => {
       response.json(updatedPerson.toJSON())
     })
