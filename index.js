@@ -45,20 +45,21 @@ app.get('/api/people', (request, response) => {
   })
 })
 
-app.post('/api/people', (request, response) => {
+app.post('/api/people', (request, response, next) => {
   const body = request.body
 
-  if (body.name === undefined) {
-    return response.status(400).json({
-      error: 'Name missing'
-    })
-  }
-  if (body.number === undefined) {
-    return response.status(400).json({
-      error: 'Number missing'
-    })
-  }
-  // if (people.find(person => person.name === body.name)) {
+  // Statements below would be used if Mongoose wasn't handling validation
+  // if (body.name === undefined) {
+  //   return response.status(400).json({
+  //     error: 'Name missing'
+  //   })
+  // }
+  // if (body.number === undefined) {
+  //   return response.status(400).json({
+  //     error: 'Number missing'
+  //   })
+  // }
+  // if (Person.find({ name: body.name })) {
   //   return response.status(409).json({
   //     error: 'Name must be unique'
   //   })
@@ -69,9 +70,11 @@ app.post('/api/people', (request, response) => {
     number: body.number
   })
 
-  person.save().then(savedPerson => {
-    response.json(savedPerson.toJSON())
-  })
+  person.save()
+    .then(savedPerson => {
+      response.json(savedPerson.toJSON())
+    })
+    .catch(error => next(error))
 })
 
 app.get('/api/people/:id', (request, response, next) => {
@@ -131,6 +134,8 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError' && error.kind == 'ObjectId') {
     return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
   }
 
   // Pass non-CastErrors to default Express error handler

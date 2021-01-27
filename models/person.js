@@ -1,5 +1,8 @@
 const mongoose = require('mongoose')
 
+// Need this because Mongoose doesn't do unique field validation
+const uniqueValidator = require('mongoose-unique-validator');
+
 const url = process.env.MONGODB_URI
 
 console.log("Connecting to", url);
@@ -12,9 +15,19 @@ mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFind
   })
 
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: String
+  name: {
+    type: String,
+    unique: true,
+    required: true
+  },
+  number: {
+    type: String,
+    required: true
+  }
 })
+
+// Apply the uniqueValidator plugin to personSchema.
+personSchema.plugin(uniqueValidator);
 
 //  Cast to ObjectId failed for value "undefined" at path "_id" for model "Person"
 // That error was because the schema's toJSON wasn't being set correctly
